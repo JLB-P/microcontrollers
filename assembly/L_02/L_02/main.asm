@@ -29,7 +29,7 @@
 mi_variable:		.byte	1 ;Reserva 1 byte para esta variable
 mi_otra_variable:	.byte	3 ;Reserva 3 bytes
 mi_variable_2:		.byte	1;
-
+x:					.byte	1;
 ; Inicia segmento de programa
 .cseg
 .org 0x0
