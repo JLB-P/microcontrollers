@@ -24,25 +24,9 @@
 	out SPH,Temp
 	ldi temp,low(RAMEND) ;Obtiene byte bajo
 	out SPL,Temp
-
-	;Configura puertos (pag.85)
-	;a)
-	;Escribir en un bit particular (usando 1<<PBx)
-	ldi temp,0b1111_1010
-	out DDRB,Temp
-	ldi temp,(1<<PB0)
-	out DDRB,Temp
-
-	;b)
-	;Escribir en un bit particular (usando sbi)
-	ldi temp,0b1111_1010
-	out DDRB,Temp
-	cbi DDRB,PB3 ;Bit 3 del puertoB como entrada
-	sbi DDRB,PB0 ;Bit 0 del puertoB como salida
-	;1. ¿Por qué require 2 click's para pasar a la otra instrucción?
-	sbi PORTB,PB3 ;Activa Resistencia pullup (pag.84)
-	;2. Explique la diferencia entre escribir un bit de la manera hecha en el inciso a) y el b)
-	;3. ¿Cómo quedaron configurados los pines del puerto B?
+	;set PB5 -> out
+	sbi DDRB,PB5
+	
 start:
 	ldi counter,20  ;Frecuencia 1
 	rcall on_off	;Salta a la rutina on/off con valor para frecuencia 1
@@ -71,9 +55,9 @@ verify_push:
 * Salida: ninguna
 *****************************************/
 on_off:
-	sbi PORTB,PB0 ;Enciende bit
+	sbi PORTB,PB5 ;Enciende bit
 	rcall delay ;Espera
-	cbi PORTB,PB0 ;Apaga bit
+	cbi PORTB,PB5 ;Apaga bit
 	rcall delay ;Espera
 	ret
 

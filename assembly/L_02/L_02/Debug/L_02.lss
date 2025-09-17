@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\repo\microcontrollers\microcontrollers\assembly\L_01\L_01\main.asm Wed Sep 10 17:39:48 2025
+AVRASM ver. 2.2.8  C:\repo\my-asm-programs\avr_asm\L_02\L_02\main.asm Wed Sep 13 16:08:53 2023
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
@@ -985,80 +985,79 @@ AVRASM ver. 2.2.8  C:\repo\microcontrollers\microcontrollers\assembly\L_01\L_01\
                                  
                                  ; ***** END OF FILE ******************************************************
                                  
-                                 ; L_01.asm
+                                 ; L_02.asm
+                                 ;
+                                 ; 
                                  /*
-                                 	1.I/O registers (Datasheet pag.624)
-                                 	2.Stack Pointer (indespensable para uso de subrutinas)
-                                 		-Init Stack (stack allways decrements)
-                                 		-SRAM memory (pag.22)
-                                 	3.Depurar subrutinas
-                                 		-Break points (more than one)
-                                 		-Subruotine Time measurement
-                                 		-Stack
-                                 	4.SimulIDE
-                                 		-Output Current calculation..
+                                 	1.SRAM memory
+                                 	-Data memory map (pag. 18)
+                                 		- 32 address General Purpose Registers
+                                 		- 64 I/O registers (pag.309)
+                                 		- 1024 internal data 
+                                 		- Addressing modes: 
+                                 			-Direct
+                                 			-Indirect with displacement
+                                 			-Indirect
+                                 			-Indirect with pre-decrement
+                                 			-Indirect with post-increment
+                                 	2. Variables declaration		
+                                 	3. addressing modes
+                                 		-Data Direct Addressing (lds Rd,K and lds K,Rr)
+                                 		-I/O Direct Addressing
+                                 		-Data indirect addressing (X=r27:r26,Y=r29:r28 o Z=r31:r30 como apuntador)
                                  */
+                                 ; Author : jlb
+                                 ;
+                                 
+                                 ;Inicio de variables
+                                 .dseg
+                                 .org 0x0100
+000100                           mi_variable:		.byte	1 ;Reserva 1 byte para esta variable
+000101                           mi_otra_variable:	.byte	3 ;Reserva 3 bytes
+000104                           mi_variable_2:		.byte	1;
+                                 
+                                 ; Inicia segmento de programa
                                  .cseg
-                                 .org 0x00	;Origen del código
-                                 .def temp = r16
-                                 .def counter = r17
-                                 .def multiplier = r18
+                                 .org 0x0
+000000 0615                      constante_1:			.db	0x15,6 ;Define constantes con valores 15 y 6
+000001 4241
+000002 4443
+000003 4645                      constante_2:			.db "ABCDEF"
+000004 1234                      constante_3:			.dw	0x1234
+000005 0055                      constante_4:			.dw	0x55	;Cambiar .dw por db y viceversa, obervar en debug
+000006 6677                      constante_5:			.dw 0x6677
                                  
-                                 ;Programa principal
-                                 	;Inicia Stack
-000000 e008                      	ldi temp,high(RAMEND) ;Obtiene byte alto
-000001 bf0e                      	out SPH,Temp
-000002 ef0f                      	ldi temp,low(RAMEND) ;Obtiene byte bajo
-000003 bf0d                      	out SPL,Temp
-                                 	;set PB5 -> out
-000004 9a25                      	sbi DDRB,PB5
-                                 	
+                                 ;Inicia Stack
+000007 e008                      	ldi r16,high(RAMEND)
+000008 bf0e                      	out SPH,r16
+000009 ef0f                      	ldi r16,low(RAMEND)
+00000a bf0d                      	out SPL,r16		;I/O Direct Addressing
+                                 //Programa principal
                                  start:
-000005 e114                      	ldi counter,20  ;Frecuencia 1
-000006 d007                      	rcall on_off	;Salta a la rutina on/off con valor para frecuencia 1
+                                 	//Data direct addressing
+00000b e205                      	ldi r16,0x25
+00000c 9300 0100                 	sts mi_variable,r16 
+00000e 9110 0100                 	lds r17,mi_variable
+000010 e619                      	ldi r17,0x69
+000011 9310 0101                 	sts mi_otra_variable,r17
+000013 e505                      	ldi r16,0x55
+000014 9300 0104                 	sts mi_variable_2,r16
                                  
-                                 ;ciclo que verifica si un botón conectado en el pin de está cerrado o abierto.
-                                 verify_push:
-000007 b103                      	in temp,PINB
-000008 7008                      	andi temp,0b00001000
-000009 3008                      	cpi temp,0x08
-00000a f3d1                      	breq start		;Si botón abierto, repite
+                                 	//Data indirect addressing
+000016 e0b1                      	ldi XH,high(mi_variable)
+000017 e0a0                      	ldi XL,low(mi_variable)
+000018 912c                      	ld r18,X
+000019 e727                      	ldi r18,0x77
+00001a 932c                      	st X,r18
                                  
-                                 	;Si botón oprimido, salta a rutina on/off a frecuencia 2
-00000b ef1f                      	ldi counter,255 ;Frecuencia 2
-00000c d001                      	rcall on_off	;salta a rutina on/off con valor para frecuencia 2
-00000d cff9                          rjmp verify_push
-                                 	;4. usando el debug, explique el uso del stack para el salto a subrutinas y regreso de una subrutina,
-                                 	;	mostrando las direcciones del PC, SP y las alamcenadas en la pila (en RAM), antes y después de
-                                 	;	ejecutar las subrutinas.
-                                 	;5. con ayuda del debug, determine el valor de la frecuencia 1
-                                 	;6. mediante el debug, determine el valor de la frecuencia 2
+                                 	//Data indirect with + and - y accediendo a cseg
+00001b e0f0                      	ldi ZH,high(constante_5<<1)	;multiplica por 2 para obtener el byte
+00001c e0ec                      	ldi ZL,low(constante_5<<1)	;multiplica por 2
+00001d 9125                      	lpm r18,Z+
+00001e 9124                      	lpm r18,Z
                                  
-                                 ;Subrutinas
-                                 /****************************************
-                                 * Rutina para encender y apagar el bit0.
-                                 * Entrada: ninguna
-                                 * Salida: ninguna
-                                 *****************************************/
-                                 on_off:
-00000e 9a2d                      	sbi PORTB,PB5 ;Enciende bit
-00000f d003                      	rcall delay ;Espera
-000010 982d                      	cbi PORTB,PB5 ;Apaga bit
-000011 d001                      	rcall delay ;Espera
-000012 9508                      	ret
-                                 
-                                 /****************************************
-                                 * Rutina de retardo, dado por counter y
-                                 * el valor definido en temp.
-                                 * Entrada: counter, temp
-                                 * Salida: retardo= counter x temp
-                                 *****************************************/
-                                 delay:
-000013 ea07                      c2:		ldi temp,167
-000014 950a                      c1:		dec temp
-000015 f7f1                      		brne c1
-000016 951a                      		dec counter 
-000017 f7d9                      		brne c2
+00001f cfeb                          rjmp start
+                                 //Subrutinas
 
 
 RESOURCE USE INFORMATION
@@ -1076,40 +1075,40 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   2 y  :   0 z  :   2 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:   9 r17:   3 r18:   0 r19:   0 r20:   0 
-r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
-r29:   0 r30:   0 r31:   0 
-Registers used: 2 out of 35 (5.7%)
+r13:   0 r14:   0 r15:   0 r16:   8 r17:   3 r18:   5 r19:   0 r20:   0 
+r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   1 r27:   1 r28:   0 
+r29:   0 r30:   1 r31:   1 
+Registers used: 9 out of 35 (25.7%)
 
 "ATmega328P" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
-andi  :   1 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   1 brge  :   0 brhc  :   0 
+andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
+brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   2 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
-brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   1 cbr   :   0 
+brne  :   0 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   0 cbr   :   0 
 clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   1 cpse  :   0 dec   :   2 eor   :   0 fmul  :   0 fmuls :   0 
-fmulsu:   0 icall :   0 ijmp  :   0 in    :   1 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :   5 lds   :   0 lpm   :   0 lsl   :   0 
+cpi   :   0 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
+fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0 
+ld    :   1 ldd   :   0 ldi   :  10 lds   :   1 lpm   :   3 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   2 pop   :   0 
-push  :   0 rcall :   4 ret   :   2 reti  :   0 rjmp  :   1 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   2 sbic  :   0 sbis  :   0 
+push  :   0 rcall :   0 ret   :   0 reti  :   0 rjmp  :   1 rol   :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   0 
+sez   :   0 sleep :   0 spm   :   0 st    :   1 std   :   0 sts   :   3 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 13 out of 113 (11.5%)
+Instructions used: 8 out of 113 (7.1%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000032     50      0     50   32768   0.2%
-[.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
+[.cseg] 0x000000 0x000040     50     14     64   32768   0.2%
+[.dseg] 0x000100 0x000105      0      5      5    2048   0.2%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
 Assembly complete, 0 errors, 0 warnings
