@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\repo\my-asm-programs\avr_asm\L_02\L_02\main.asm Wed Sep 13 16:08:53 2023
+AVRASM ver. 2.2.8  C:\repo\microcontrollers\microcontrollers\assembly\L_02\L_02\main.asm Wed Sep 17 16:58:43 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m328Pdef.inc'
@@ -1014,8 +1014,7 @@ AVRASM ver. 2.2.8  C:\repo\my-asm-programs\avr_asm\L_02\L_02\main.asm Wed Sep 13
                                  .org 0x0100
 000100                           mi_variable:		.byte	1 ;Reserva 1 byte para esta variable
 000101                           mi_otra_variable:	.byte	3 ;Reserva 3 bytes
-000104                           mi_variable_2:		.byte	1;
-                                 
+000104                           mi_variable_2:		.byte	1
                                  ; Inicia segmento de programa
                                  .cseg
                                  .org 0x0
