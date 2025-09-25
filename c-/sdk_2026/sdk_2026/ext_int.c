@@ -14,7 +14,7 @@ ISR(INT0_vect)
 
 void init_int0(void)
 {
-	EICRA |= (1 << ISC00); //Define pulso de subida
+	EICRA |= (1 << ISC00); //interruption on any logical change
 	EIMSK |= (1 << INT0);
 	sei();
 }
