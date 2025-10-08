@@ -9,12 +9,14 @@
 #include "ports.h"
 #include "leds.h"
 #include "ext_int.h"
+#include "timers.h"
 
 int main(void)
 {
     /* Replace with your application code */
     init_ports();
 	init_int0();
+	timer0_normalmode_noprescaler();
 	while (1) 
     {
 	 led_on_off();
