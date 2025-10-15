@@ -3,7 +3,7 @@
  *
  * Created: 9/24/2025 4:47:19 PM
  *  Author: josel
- */ 
+ */
 #include <avr/interrupt.h>
 #include "leds.h"
 
@@ -16,5 +16,5 @@ void init_int0(void)
 {
 	EICRA |= (1 << ISC00); //interruption on any logical change
 	EIMSK |= (1 << INT0);
-	sei();
+	
 }

@@ -2,10 +2,9 @@
  * Timers.c
  *
  */ 
-
+#include <avr/interrupt.h>
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
 
 //timer0
 void timer0_normalmode_noprescaler(void)
