@@ -113,9 +113,9 @@ void timer1_CTCmode_interrupt(void)
 	//configure timer
 	TCCR1B |= 1<<WGM12; // timer1 in CTC mode (pag.141,table 16.4)
 	/*
-	example: fosc = 16 Mhz, (required)T = 0.5ms -> f = 1/(2x0.5ms) = 1 KHz						
+	example: fosc = 16 Mhz, (required)TH = 0.5ms -> T= 1ms f = 1/(2x0.5ms) = 1 KHz						
 	(prescaler factor) N=(fosc/(1/T)x65,536) = 
-	(16,000,000)/(2000x65,536) = 0.122125 (~1)
+	(16,000,000)/(1000x65,536) = 0.244144 (~1)
 	OCR1A = (fosc/(2xNxfocr))-1								
 	OCR1A = (16,000,000/2x(1)x(1000))-1 = 7999										
 	with this value pulse witdth = 0.5 ms												
@@ -128,18 +128,18 @@ void timer1_CTCmode_interrupt(void)
 }
 void timer1_CTCmode_nonPWM(void)
 {
-	TCCR1B |= 1<<WGM12; // timer1 in CTC mode (table 16.4)
+	TCCR1B |= 1<<WGM12; // timer1 in CTC mode (table 16-4)
 	/*
-	example: fosc = 16 Mhz, T = 1.5ms -> f = 1/(2x1.5ms) = 333 Hz					
+	example: fosc=16 Mhz, TH=1.5ms -> T=3ms f = 1/(2x1.5ms) = 333 Hz					
 	(precaler factor) N=(fosc/(1/T)x65,536) =
-	(16,000,000)/(666x65,536) = 0.036 (~1)	
+	(16,000,000)/(333x65,536) = 0.733 (~1)	
 	OCR1A = (fosc/(2xNxfocr))-1								
 	OCR1A = (16,000,000/2x(1)x(333))-1 = 24,023										
-	with this value pulse witdth = 1.5 ms,
+	with this value pulse width = 1.5 ms,
 	***output on OC1A PB1****/	
 	OCR1A |= 24023;
-	TCCR1B |= 1<<CS10;		//set prescaler = 1
-	TCCR1A |= 1 << COM1A0;	//OC1A toggle (table 16.3)
+	TCCR1B |= 1<<CS10;		//No prescaling (table 16-5)
+	TCCR1A |= 1 << COM1A0;	//OC1A toggle (table 16-1)
 	TCNT1 = 0;				//Set counting to 0
 }
 void timer1_fastPWM_inverting(void)
@@ -168,7 +168,7 @@ rectification and DAC applications*/
 	
 	//TCCR1A &= 0 << CS10; //Detiene el reloj
 	//Ejemplo para variar el ancho de pulso
-	/*
+	
 	while (1)
 	{
 		OCR1A = ICR1 - 4200;
@@ -176,7 +176,7 @@ rectification and DAC applications*/
 		OCR1A = ICR1 - 2200;
 		_delay_ms(200);
 	}
-	*/
+	
 }
 
 //timer2
@@ -192,6 +192,7 @@ void timer2_CTCmode(void)
 	************************************************************************/
 	OCR2A = 249;								
 	TCCR2B |= (1 << CS20) | (1 << CS22); //set prescaler = 128
+	/*
 	while (1)
 	{
 		if (TIFR2 & (1 << OCF2A)) //if OCF2A = 1 (timercounter2 = OCR2A)
@@ -199,8 +200,9 @@ void timer2_CTCmode(void)
 			PORTB ^= 1 << PB5; //PB5 --> output (ports.c)
 			TIFR2 =  (1 << OCF2A); //TIFR2 flag back to 1
 		}
-	}
+	}*/
 }
+
 void Timer2_PhaseCorrectPWMMode_Inverting(void)
 {
 	//Usa PB3 (OC2) como salida (definir PB3--> salida en IO_PORTs.c)
@@ -231,4 +233,3 @@ void Timer2_PhaseCorrectPWMMode_Inverting(void)
 	}
 	*/
 }
-

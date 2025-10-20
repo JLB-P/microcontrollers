@@ -19,7 +19,10 @@ int main(void)
 	init_int0();
 	//timer0_normalmode_noprescaler();
 	//timer0_overflow_interrupt();
-	timer1_CTCmode_interrupt();
+	//timer1_CTCmode_interrupt();
+	//timer1_CTCmode_nonPWM();
+	//timer1_fastPWM_inverting();
+	Timer2_PhaseCorrectPWMMode_Inverting();
 	sei();
 	while (1) 
     {
