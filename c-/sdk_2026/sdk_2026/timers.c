@@ -168,7 +168,7 @@ rectification and DAC applications*/
 	
 	//TCCR1A &= 0 << CS10; //Detiene el reloj
 	//Ejemplo para variar el ancho de pulso
-	
+	/*
 	while (1)
 	{
 		OCR1A = ICR1 - 4200;
@@ -176,7 +176,7 @@ rectification and DAC applications*/
 		OCR1A = ICR1 - 2200;
 		_delay_ms(200);
 	}
-	
+	*/
 }
 
 //timer2
@@ -203,32 +203,37 @@ void timer2_CTCmode(void)
 	}*/
 }
 
+
+
 void Timer2_PhaseCorrectPWMMode_Inverting(void)
 {
-	//Usa PB3 (OC2) como salida (definir PB3--> salida en IO_PORTs.c)
-	//Define modo PHASE CORRECT PWM (tabla 42 pag.115)
+	//Usa PB3 (OC2A) como salida (definir PB3--> salida)
+	//Define modo PHASE CORRECT PWM (pag.164)
 	TCCR2A |= 1 << WGM20;
-	//Clear when upcounting, Set when downcounting (tabla 45 pag.116)
+	//Clear OC2A when upcounting(table 18-4)
 	TCCR2A |= 1 << COM2A1;
-	//Prescaling fclk/128 (tabla 46 pag.116)
-	//f=16,000,000/128= 125,000
-	//T= 8 us
-	TCCR2A |= (1 << CS22)|(1 << CS20);
-	OCR2A = 10;
+	//fout=fosc/(prescalerx510)
+	//if prescaling fclk/32
+	//fout=16,000,000/(32x510)=980.39 Hz ~T= 1 ms
+	TCCR2B |= (1 << CS21)|(1 << CS20);
+	//example: duty cycle= 20%
+	//OCR value=(duty cycle in %)x256=(0.2x256)=51.2 ~ (51)
+	OCR2A = 51;
 	/*
-	uint8_t brillo;
-	while (1)
-	{
-		for (brillo=0;brillo<=255;++brillo)
-		{
-			OCR2A = brillo;
-			_delay_ms(10);
-		}
-		
-		for (brillo=255;brillo > 0;--brillo)
-		{
-			OCR2A = brillo;
-			_delay_ms(10);
+	uint8_t brillo = 0;
+	uint8_t fadein = 1;
+	while(1) {	
+		OCR2A = brillo;	
+		if(fadein)
+			brillo += 5;
+		else
+			brillo -= 5;
+		if(brillo == 0  || brillo ==  255){
+			fadein = !fadein;
+			_delay_ms(2000);
+			{
+			_delay_ms(50);
+			}
 		}
 	}
 	*/

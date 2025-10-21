@@ -3,31 +3,31 @@ sdk_2026.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  0000023a  2**0
+  0 .data         00000000  00800100  00800100  0000023e  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         000001c6  00000000  00000000  00000074  2**1
+  1 .text         000001ca  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000001  00800100  00800100  0000023a  2**0
+  2 .bss          00000001  00800100  00800100  0000023e  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  0000023a  2**0
+  3 .comment      00000030  00000000  00000000  0000023e  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  0000026c  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000270  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000100  00000000  00000000  000002ac  2**0
+  5 .debug_aranges 00000100  00000000  00000000  000002b0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000bb1  00000000  00000000  000003ac  2**0
+  6 .debug_info   00000af0  00000000  00000000  000003b0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000919  00000000  00000000  00000f5d  2**0
+  7 .debug_abbrev 00000887  00000000  00000000  00000ea0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000079e  00000000  00000000  00001876  2**0
+  8 .debug_line   0000070a  00000000  00000000  00001727  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000001e4  00000000  00000000  00002014  2**2
+  9 .debug_frame  000001e4  00000000  00000000  00001e34  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000525  00000000  00000000  000021f8  2**0
+ 10 .debug_str    00000525  00000000  00000000  00002018  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000299  00000000  00000000  0000271d  2**0
+ 11 .debug_loc    00000251  00000000  00000000  0000253d  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000000b0  00000000  00000000  000029b6  2**0
+ 12 .debug_ranges 000000b0  00000000  00000000  0000278e  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -82,7 +82,7 @@ Disassembly of section .text:
   80:	b2 07       	cpc	r27, r18
   82:	e1 f7       	brne	.-8      	; 0x7c <.do_clear_bss_loop>
   84:	0e 94 8b 00 	call	0x116	; 0x116 <main>
-  88:	0c 94 e1 00 	jmp	0x1c2	; 0x1c2 <_exit>
+  88:	0c 94 e3 00 	jmp	0x1c6	; 0x1c6 <_exit>
 
 0000008c <__bad_interrupt>:
   8c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -307,33 +307,37 @@ void init_ports(void)
 
 void Timer2_PhaseCorrectPWMMode_Inverting(void)
 {
-	//Usa PB3 (OC2) como salida (definir PB3--> salida en IO_PORTs.c)
-	//Define modo PHASE CORRECT PWM (tabla 42 pag.115)
+	//Usa PB3 (OC2A) como salida (definir PB3--> salida)
+	//Define modo PHASE CORRECT PWM (pag.164)
 	TCCR2A |= 1 << WGM20;
  1a4:	e0 eb       	ldi	r30, 0xB0	; 176
  1a6:	f0 e0       	ldi	r31, 0x00	; 0
  1a8:	80 81       	ld	r24, Z
  1aa:	81 60       	ori	r24, 0x01	; 1
  1ac:	80 83       	st	Z, r24
-	//Clear when upcounting, Set when downcounting (tabla 45 pag.116)
+	//Clear OC2A when upcounting(table 18-4)
 	TCCR2A |= 1 << COM2A1;
  1ae:	80 81       	ld	r24, Z
  1b0:	80 68       	ori	r24, 0x80	; 128
  1b2:	80 83       	st	Z, r24
-	//Prescaling fclk/128 (tabla 46 pag.116)
-	//f=16,000,000/128= 125,000
-	//T= 8 us
-	TCCR2A |= (1 << CS22)|(1 << CS20);
- 1b4:	80 81       	ld	r24, Z
- 1b6:	85 60       	ori	r24, 0x05	; 5
- 1b8:	80 83       	st	Z, r24
-	OCR2A = 10;
- 1ba:	8a e0       	ldi	r24, 0x0A	; 10
- 1bc:	80 93 b3 00 	sts	0x00B3, r24	; 0x8000b3 <__TEXT_REGION_LENGTH__+0x7f80b3>
- 1c0:	08 95       	ret
+	//fout=fosc/(prescalerx510)
+	//if prescaling fclk/32
+	//fout=16,000,000/(32x510)=980.39 Hz ~T= 1 ms
+	TCCR2B |= (1 << CS21)|(1 << CS20);
+ 1b4:	e1 eb       	ldi	r30, 0xB1	; 177
+ 1b6:	f0 e0       	ldi	r31, 0x00	; 0
+ 1b8:	80 81       	ld	r24, Z
+ 1ba:	83 60       	ori	r24, 0x03	; 3
+ 1bc:	80 83       	st	Z, r24
+	//example: duty cycle= 20%
+	//OCR value=(duty cycle in %)x256=(0.2x256)=51.2 ~ (51)
+	OCR2A = 51;
+ 1be:	83 e3       	ldi	r24, 0x33	; 51
+ 1c0:	80 93 b3 00 	sts	0x00B3, r24	; 0x8000b3 <__TEXT_REGION_LENGTH__+0x7f80b3>
+ 1c4:	08 95       	ret
 
-000001c2 <_exit>:
- 1c2:	f8 94       	cli
+000001c6 <_exit>:
+ 1c6:	f8 94       	cli
 
-000001c4 <__stop_program>:
- 1c4:	ff cf       	rjmp	.-2      	; 0x1c4 <__stop_program>
+000001c8 <__stop_program>:
+ 1c8:	ff cf       	rjmp	.-2      	; 0x1c8 <__stop_program>
