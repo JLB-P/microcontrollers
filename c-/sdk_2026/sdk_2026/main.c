@@ -11,6 +11,7 @@
 #include "leds.h"
 #include "ext_int.h"
 #include "timers.h"
+#include "comp.h"
 
 int main(void)
 {
@@ -21,8 +22,9 @@ int main(void)
 	//timer0_overflow_interrupt();
 	//timer1_CTCmode_interrupt();
 	//timer1_CTCmode_nonPWM();
-	//timer1_fastPWM_inverting();
+	timer1_fastPWM_inverting();
 	Timer2_PhaseCorrectPWMMode_Inverting();
+	init_comp();
 	sei();
 	while (1) 
     {

@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+comp.c
+
 ext_int.c
 
 leds.c
