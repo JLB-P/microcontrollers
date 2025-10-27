@@ -6,6 +6,8 @@ comp.c
 
 ext_int.c
 
+lcd_4b.c
+
 leds.c
 
 main.c
