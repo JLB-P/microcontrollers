@@ -121,10 +121,22 @@
     <Compile Include="ext_int.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="lcd_4b.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="lcd_4b.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lcd_i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="lcd_i2c.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="leds.c">

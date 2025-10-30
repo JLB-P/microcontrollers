@@ -12,7 +12,7 @@
 #include "ext_int.h"
 #include "timers.h"
 #include "comp.h"
-#include "lcd_4b.h"
+#include "lcd_i2c.h"
 
 int main(void)
 {
@@ -25,13 +25,13 @@ int main(void)
 	//timer1_CTCmode_nonPWM();
 	//timer1_fastPWM_inverting();
 	//Timer2_PhaseCorrectPWMMode_Inverting();
-	init_comp();
-	lcd_init();
-	lcd_col_row(5,1);
-	lcd_write_string("reprobados");
+	//init_comp();
+	lcd_i2c_write_string("aprobados");
+	
 	sei();
 	while (1) 
     {
+		
 	 //led_on_off();
     }
 }
