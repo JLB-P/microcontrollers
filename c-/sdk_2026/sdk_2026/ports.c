@@ -19,6 +19,4 @@ void init_ports(void)
 	PORTD |= (1 << PD2);//activa Rp
 	//uso temporal del puerto B para LCD
 	DDRB = 0xff; //PB4 a PB7 para datos
-	
-	
 }

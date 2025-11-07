@@ -7,10 +7,11 @@
 #include "leds.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
-
+volatile uint8_t flag=0;
 ISR(ANALOG_COMP_vect)
 {
-	led_on_off_fast();
+	flag = 1;
+	
 }
 
 

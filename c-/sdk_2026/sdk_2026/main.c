@@ -25,7 +25,8 @@ int main(void)
 	//timer1_CTCmode_nonPWM();
 	//timer1_fastPWM_inverting();
 	//Timer2_PhaseCorrectPWMMode_Inverting();
-	//init_comp();
+	init_comp();
+	lcd_i2c_init();
 	lcd_i2c_write_string("aprobados");
 	
 	sei();
