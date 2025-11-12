@@ -13,22 +13,22 @@
 #include "timers.h"
 #include "comp.h"
 #include "lcd_i2c.h"
+#include "adc.h"
 
 int main(void)
 {
     /* Replace with your application code */
     init_ports();
-	init_int0();
+	//init_int0();
 	//timer0_normalmode_noprescaler();
 	//timer0_overflow_interrupt();
 	//timer1_CTCmode_interrupt();
 	//timer1_CTCmode_nonPWM();
 	//timer1_fastPWM_inverting();
 	//Timer2_PhaseCorrectPWMMode_Inverting();
-	init_comp();
+	//init_comp();
 	lcd_i2c_init();
-	lcd_i2c_write_string("aprobados");
-	
+	init_adc_withINT();
 	sei();
 	while (1) 
     {
